@@ -1,0 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Apr 10 12:22:00 2018
+@author: s.jayanthi
+"""
+
+# Resources
+
+[1] https://mlnotebook.github.io/post/nn-in-python/
+[2] https://deepnotes.io/softmax-crossentropy
