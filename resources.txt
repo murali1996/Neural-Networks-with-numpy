@@ -8,3 +8,4 @@ Created on Tue Apr 10 12:22:00 2018
 
 [1] https://mlnotebook.github.io/post/nn-in-python/
 [2] https://deepnotes.io/softmax-crossentropy
+[3] http://cs231n.github.io/neural-networks-2/#init
