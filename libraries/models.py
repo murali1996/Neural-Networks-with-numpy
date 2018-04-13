@@ -70,7 +70,7 @@ class Sequential(object):
                         currInput = self.forwardPass(currInput, layer_ind);
                     # Forward-propogate Error
                     error = (getattr(losses, self.loss_type)(currInput, currTarget, False)).astype(config.data_type);
-                    self.error+=error; #print(error) # currInput is the output on which loss function has to be applied
+                    self.error+=error; # TIP: currInput is the output on which loss function has to be applied
                     # Back-propogate Error
                     currLoss = getattr(losses, self.loss_type)(currInput, currTarget, True)
                     # Collect delta values to be updated
@@ -85,21 +85,24 @@ class Sequential(object):
             print('>'*thisEpoch_nBatches, end='\n'); print(self.error/thisEpoch_nBatches);
         return
     def forwardPass(self, currInput, layer_ind):
-        # Multiply weights and add biases
-        if self.trainable_params_bool[layer_ind]==True:
-            self.layer_inputs.append(currInput);
+        # Initialization
+        self.layer_inputs.append(None);
+        self.layer_activation_inputs.append(None);
+        # Dense Layer Type
+        if self.layer_type[layer_ind]=='dense_layer':
+            # Multiply weights and add biases
+            self.layer_inputs[layer_ind] = currInput;
             currInput = np.dot(currInput.T,self.layer_weights[layer_ind]);
             currInput = currInput.T;
             currInput = currInput + self.layer_biases[layer_ind];
-        else:
-            self.layer_inputs.append(None);
-        # If any activation, apply activation function
-        if self.activation_type[layer_ind]!=None and self.trainable_params_bool[layer_ind]==True:
-            self.layer_activation_inputs.append(currInput)
-            act_type = self.activation_type[layer_ind];
-            currInput = getattr(activations, act_type, False)(currInput);
-        else:
-            self.layer_activation_inputs.append(None)
+            # If any activation, apply activation function
+            if self.activation_type[layer_ind]!=None:
+                self.layer_activation_inputs[layer_ind] = currInput;
+                act_type = self.activation_type[layer_ind];
+                currInput = getattr(activations, act_type, False)(currInput);
+        # Convolution Layer Types
+        elif self.layer_type[layer_ind]=='conv_layer':
+            print('Under Construction!')
         # Return updated currInput
         return currInput;
     def initialize_delta_weights_biases(self):
@@ -113,26 +116,38 @@ class Sequential(object):
                 self.layer_delta_biases.append(None);
         return;
     def update_delta_weights_biases(self, currLoss, layer_ind):
-        # Pass loss through activation if any
-        if self.activation_type[layer_ind]!=None: 
-            act_type = self.activation_type[layer_ind];
-            currLoss *= getattr(activations, act_type, True)(self.layer_activation_inputs[layer_ind]);
-        # Delta values collection for this one training sample in this batch
-        if self.trainable_params_bool[layer_ind]==True:  
-            for i in range(self.layer_weights[layer_ind].shape[0]):
+        # Dense Layer Type
+        if self.layer_type[layer_ind]=='dense_layer':
+            # Pass loss through activation if any
+            if self.activation_type[layer_ind]!=None: 
+                act_type = self.activation_type[layer_ind];
+                currLoss *= getattr(activations, act_type, True)(self.layer_activation_inputs[layer_ind]);
+            # Delta values collection for this one training sample in this batch
+            if self.trainable_params_bool[layer_ind]==True:  
+                for i in range(self.layer_weights[layer_ind].shape[0]):
+                    for j in range(self.layer_weights[layer_ind].shape[1]):
+                        self.layer_delta_weights[layer_ind][i,j] += (-1)*self.learning_rate*self.layer_inputs[layer_ind][i]*currLoss[j];
                 for j in range(self.layer_weights[layer_ind].shape[1]):
-                    self.layer_delta_weights[layer_ind][i,j] += (-1)*self.learning_rate*self.layer_inputs[layer_ind][i]*currLoss[j];
-            for j in range(self.layer_weights[layer_ind].shape[1]):
-                self.layer_delta_biases[layer_ind][j] += (-1)*self.learning_rate*currLoss[j];
-            # Pass on the currLoss
-            currLoss = np.dot(currLoss.T,self.layer_weights[layer_ind].T);
-            currLoss = currLoss.T;
+                    self.layer_delta_biases[layer_ind][j] += (-1)*self.learning_rate*currLoss[j];
+                # Pass on the currLoss
+                currLoss = np.dot(currLoss.T,self.layer_weights[layer_ind].T);
+                currLoss = currLoss.T;
+        # Convolution Layer Types
+        elif self.layer_type[layer_ind]=='conv_layer':
+            print('Under Construction!')
+        # Return the Loss Updated
         return currLoss;
     def update_weights_biases(self, layer_ind): # FOR THIS BATCH: Update Weights and biases
-        if self.trainable_params_bool[layer_ind]==True:
-            for i in range(self.layer_weights[layer_ind].shape[0]):
+        # Dense Layer Type
+        if self.layer_type[layer_ind]=='dense_layer':
+            if self.trainable_params_bool[layer_ind]==True:
+                for i in range(self.layer_weights[layer_ind].shape[0]):
+                    for j in range(self.layer_weights[layer_ind].shape[1]):
+                        self.layer_weights[layer_ind][i,j] += self.layer_delta_weights[layer_ind][i,j]
                 for j in range(self.layer_weights[layer_ind].shape[1]):
-                    self.layer_weights[layer_ind][i,j] += self.layer_delta_weights[layer_ind][i,j]
-            for j in range(self.layer_weights[layer_ind].shape[1]):
-                self.layer_biases[layer_ind][j] += self.layer_delta_biases[layer_ind][j];
-        return
+                    self.layer_biases[layer_ind][j] += self.layer_delta_biases[layer_ind][j];
+            return
+        # Convolution Layer Types
+        elif self.layer_type[layer_ind]=='conv_layer':
+            print('Under Construction!')
+            return

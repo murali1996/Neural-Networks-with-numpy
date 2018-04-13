@@ -14,6 +14,6 @@ model.add('dense_layer', 32, 'relu');
 model.add('dense_layer', 64, 'relu');
 model.add('dense_layer', 128, 'relu');
 model.add('dense_layer', 32, 'relu');
-model.add('output_layer', 5);
+model.add('dense_layer', 5);
 model.compile(loss = 'softmax_with_cross_entropy', optimizer='gradient_descent');
 model.train(inputs=inputs,targets=targets, n_epochs=100) #batch_size=16
