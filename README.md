@@ -1,6 +1,6 @@
 **ABOUT**
 --------------------------
-Implementation of deep nueral networks and convolutional nueral networks using 
+Implementation of deep neural networks and convolutional neural networks using 
 NUMPY library in python. The modularity is inspired from Keras library. 
 
 **LIBRARIES**
