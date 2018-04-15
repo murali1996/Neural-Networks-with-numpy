@@ -51,13 +51,22 @@ def conv2D_layer(thisLayer, keyword_args):
         thisLayer['n_kernels'] = keyword_args['n_kernels'];
     except KeyError:
         raise Exception('n_kernels has to be defined')
-    thisLayer['output_shape'] =  list(thisLayer['input_shape']);
-    thisLayer['output_shape'][-1] = thisLayer['n_kernels'];
-    thisLayer['output_shape'] = tuple(thisLayer['output_shape'])
     try:
         thisLayer['padding'] = keyword_args['padding'];
     except KeyError: #'padding has to be defined; default is <same>'
         pass;
+    try:
+        thisLayer['stride'] = keyword_args['stride'];
+    except KeyError: #'padding has to be defined; default is <same>'
+        pass;        
+    if thisLayer['padding']=='same':
+        try:
+            assert(thisLayer['stride']==(1,1))
+        except AssertionError:
+            raise Exception('With padding same, only compatible stride=(1,1)')
+        thisLayer['output_shape'] =  list(thisLayer['input_shape']);
+        thisLayer['output_shape'][-1] = thisLayer['n_kernels'];
+        thisLayer['output_shape'] = tuple(thisLayer['output_shape']);
     n_weights = thisLayer['kernel_shape'][0]*thisLayer['kernel_shape'][1]*\
                 thisLayer['input_shape'][2]*thisLayer['n_kernels'];
     weights = np.random.randn(n_weights)/np.sqrt(n_weights);
