@@ -22,6 +22,7 @@ def rmse(y_pred, y_true, derivative=False):
     try:
         assert(y_pred_flatten.shape==y_true_flatten.shape)
     except:
+        print(y_pred_flatten.shape,y_true_flatten.shape)
         raise Exception('Output shape predicted IS NOT SAME AS Output shape targetted!');
     # Compute
     l_x = (y_pred_flatten-y_true_flatten);

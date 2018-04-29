@@ -5,14 +5,14 @@ NUMPY library in python. The modularity is inspired from Keras library.
 
 **LIBRARIES**
 --------------------------
-activations.py: relu, sigmoid, tanh, softmax
-losses.py: rmse, mae, softmax_with_cross_entropy, binary_cross_entropy
-layers.py: dense, conv2D, flatten
-helpers.py: flatten, unflatten, padding
+activations.py: relu, sigmoid, tanh, softmax  <br />
+losses.py: rmse, mae, softmax_with_cross_entropy, binary_cross_entropy  <br />
+layers.py: dense, conv2D, flatten  <br />
+helpers.py: flatten, unflatten, padding  <br />
 
 **SAMPLE CODE**
 ----------
-Sample code is avilable in 'main.py' file
+Sample codes are avilable in 'main.py' file
 
 **RESOURCES**
 ----------
